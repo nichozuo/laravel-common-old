@@ -1,0 +1,21 @@
+{
+    "name": "nichozuo\/laravel-common",
+    "description": "Package description here.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "nichozuo",
+            "email": "nichozuo@qq.com"
+        }
+    ],
+    "require": {
+        "php": "^7.4",
+        "laravel/framework": "^8.0",
+        "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Nichozuo\\LaravelCommon\\": "src"
+        }
+    }
+}
