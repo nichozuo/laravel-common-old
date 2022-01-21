@@ -1,6 +1,6 @@
 <?php
 
-namespace Nichozuo\LaravelCommon\Route;
+namespace Nichozuo\LaravelCommon\Helpers;
 
 use Illuminate\Routing\Router;
 use Illuminate\Support\Str;

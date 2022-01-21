@@ -29,7 +29,8 @@ trait TestCaseTrait
         $headers['Authorization'] = 'Bearer ' . $this->token;
         $response = $this->post($url, $params, $headers);
         $json = $response->json();
-        $response->assertStatus(200);
+        $this->assertTrue($response->getStatusCode() == 200);
+//        $response->assertStatus($response->getStatusCode());
         dump(json_encode($json));
         dump($json);
     }
