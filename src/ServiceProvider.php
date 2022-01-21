@@ -7,6 +7,7 @@ namespace Nichozuo\LaravelCommon;
 use Nichozuo\LaravelCommon\DevTools\Commands\ClearDBCacheCommand;
 use Nichozuo\LaravelCommon\DevTools\Commands\DumpTableCommand;
 use Nichozuo\LaravelCommon\DevTools\Commands\GenFilesCommand;
+use Nichozuo\LaravelCommon\DevTools\Commands\ISeedBackupCommand;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
@@ -15,7 +16,8 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->commands([
             DumpTableCommand::class,
             ClearDBCacheCommand::class,
-            GenFilesCommand::class
+            GenFilesCommand::class,
+            ISeedBackupCommand::class
         ]);
     }
 
