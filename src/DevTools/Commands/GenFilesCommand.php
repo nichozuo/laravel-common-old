@@ -63,25 +63,29 @@ class GenFilesCommand extends BaseCommand
         $table = TableHelper::GetTable($tableName);
         $columns = TableHelper::GetTableColumns($table);
 
-        $this->makeMigration($tableName, $options);
-        $this->makeModel($table, $columns, $modelName, $options);
-        $this->makeController($table, $columns, $modelName, $prefix, $options);
-        $this->makeTest($modelName, $prefix, $options);
+        if ($options['migration'])
+            $this->makeMigration($tableName);
+
+        if ($options['model'])
+            $this->makeModel($table, $columns, $modelName, $options);
+
+        if ($options['controller'])
+            $this->makeController($table, $columns, $modelName, $prefix, $options);
+
+        if ($options['test'])
+            $this->makeTest($modelName, $prefix, $options);
     }
 
     /**
      * @param string $tableName
-     * @param array $options
      */
-    private function makeMigration(string $tableName, array $options)
+    private function makeMigration(string $tableName)
     {
-        if ($options['migration']) {
-            $this->call('make:migration', [
-                'name' => "create_{$tableName}_table",
-                '--create' => $tableName,
-                '--table' => $tableName,
-            ]);
-        }
+        $this->call('make:migration', [
+            'name' => "create_{$tableName}_table",
+            '--create' => $tableName,
+            '--table' => $tableName,
+        ]);
     }
 
     /**
@@ -92,32 +96,30 @@ class GenFilesCommand extends BaseCommand
      */
     private function makeModel(Table $table, array $columns, string $modelName, array $options)
     {
-        if ($options['model']) {
-            $hasSoftDelete = TableHelper::GetColumnsHasSoftDelete($table->getColumns());
-            // BaseModel
-            $stubName = $hasSoftDelete ? 'BaseModelWithSoftDelete.stub' : 'BaseModel.stub';
-            $stubContent = StubHelper::GetStub($stubName);
-            $stubContent = StubHelper::Replace([
-                '{{ModelProperties}}' => GenHelper::GenColumnsPropertiesString($table),
-                '{{ModelMethods}}' => GenHelper::GenTableMethodsString(),
-                '{{ModelName}}' => $modelName,
-                '{{TableString}}' => GenHelper::GenTableString($table),
-                '{{TableCommentString}}' => GenHelper::GenTableCommentString($table),
-                '{{TableFillableString}}' => GenHelper::GenTableFillableString($columns),
-                '{{ModelRelations}}' => GenHelper::GenTableRelations($table),
-            ], $stubContent);
-            $filePath = $this->laravel['path'] . '/Models/Base/Base' . $modelName . '.php';
-            $result = StubHelper::Save($filePath, $stubContent, $options['force']);
-            $this->line($result);
-            // Model
-            $stubContent = StubHelper::GetStub('Model.stub');
-            $stubContent = StubHelper::Replace([
-                '{{ModelName}}' => $modelName,
-            ], $stubContent);
-            $filePath = $this->laravel['path'] . '/Models/' . $modelName . '.php';
-            $result = StubHelper::Save($filePath, $stubContent, false);
-            $this->line($result);
-        }
+        $hasSoftDelete = TableHelper::GetColumnsHasSoftDelete($table->getColumns());
+        // BaseModel
+        $stubName = $hasSoftDelete ? 'BaseModelWithSoftDelete.stub' : 'BaseModel.stub';
+        $stubContent = StubHelper::GetStub($stubName);
+        $stubContent = StubHelper::Replace([
+            '{{ModelProperties}}' => GenHelper::GenColumnsPropertiesString($table),
+            '{{ModelMethods}}' => GenHelper::GenTableMethodsString(),
+            '{{ModelName}}' => $modelName,
+            '{{TableString}}' => GenHelper::GenTableString($table),
+            '{{TableCommentString}}' => GenHelper::GenTableCommentString($table),
+            '{{TableFillableString}}' => GenHelper::GenTableFillableString($columns),
+            '{{ModelRelations}}' => GenHelper::GenTableRelations($table),
+        ], $stubContent);
+        $filePath = $this->laravel['path'] . '/Models/Base/Base' . $modelName . '.php';
+        $result = StubHelper::Save($filePath, $stubContent, $options['force']);
+        $this->line($result);
+        // Model
+        $stubContent = StubHelper::GetStub('Model.stub');
+        $stubContent = StubHelper::Replace([
+            '{{ModelName}}' => $modelName,
+        ], $stubContent);
+        $filePath = $this->laravel['path'] . '/Models/' . $modelName . '.php';
+        $result = StubHelper::Save($filePath, $stubContent, false);
+        $this->line($result);
     }
 
     /**
@@ -130,23 +132,21 @@ class GenFilesCommand extends BaseCommand
      */
     private function makeController(Table $table, array $columns, string $modelName, array $prefix, array $options)
     {
-        if ($options['controller']) {
-            if (count($prefix) == 0)
-                throw new Exception('生成Controller需要模块名称，比如： admin/wechat');
-            $hasSoftDelete = TableHelper::GetColumnsHasSoftDelete($table->getColumns());
-            $stubName = $hasSoftDelete ? 'controllerWithSoftDelete.stub' : 'controller.stub';
-            $stubContent = StubHelper::GetStub($stubName);
-            $stubContent = StubHelper::Replace([
-                '{{ModelName}}' => $modelName,
-                '{{TableComment}}' => $table->getComment(),
-                '{{ModuleName}}' => implode('\\', $prefix),
-                '{{InsertString}}' => GenHelper::GenColumnsRequestValidateString($columns, "\t\t\t"),
-            ], $stubContent);
-            $moduleName = implode('/', $prefix);
-            $filePath = $this->laravel['path'] . "/Modules/$moduleName/{$modelName}Controller.php";
-            $result = StubHelper::Save($filePath, $stubContent, $options['force']);
-            $this->line($result);
-        }
+        if (count($prefix) == 0)
+            throw new Exception('生成Controller需要模块名称，比如： admin/wechat');
+        $hasSoftDelete = TableHelper::GetColumnsHasSoftDelete($table->getColumns());
+        $stubName = $hasSoftDelete ? 'controllerWithSoftDelete.stub' : 'controller.stub';
+        $stubContent = StubHelper::GetStub($stubName);
+        $stubContent = StubHelper::Replace([
+            '{{ModelName}}' => $modelName,
+            '{{TableComment}}' => $table->getComment(),
+            '{{ModuleName}}' => implode('\\', $prefix),
+            '{{InsertString}}' => GenHelper::GenColumnsRequestValidateString($columns, "\t\t\t"),
+        ], $stubContent);
+        $moduleName = implode('/', $prefix);
+        $filePath = $this->laravel['path'] . "/Modules/$moduleName/{$modelName}Controller.php";
+        $result = StubHelper::Save($filePath, $stubContent, $options['force']);
+        $this->line($result);
     }
 
     /**
@@ -156,27 +156,25 @@ class GenFilesCommand extends BaseCommand
      * @throws ReflectionException
      * @throws Exception
      */
-    private function makeTest( string $modelName, array $prefix, array $options)
+    private function makeTest(string $modelName, array $prefix, array $options)
     {
-        if ($options['test']) {
-            if (count($prefix) == 0)
-                throw new Exception('生成Controller需要模块名称，比如： admin/wechat');
+        if (count($prefix) == 0)
+            throw new Exception('生成Controller需要模块名称，比如： admin/wechat');
 
-            $nameSpace = 'App\\Modules\\' . implode('\\', $prefix) . '\\' . $modelName . 'Controller';
-            $controllerFilePath = $this->laravel['path'] . DIRECTORY_SEPARATOR . 'Modules' . DIRECTORY_SEPARATOR . implode('/', $prefix) . '/' . $modelName . 'Controller.php';
-            $content = GenHelper::GenTestContent($nameSpace, $controllerFilePath);
+        $nameSpace = 'App\\Modules\\' . implode('\\', $prefix) . '\\' . $modelName . 'Controller';
+        $controllerFilePath = $this->laravel['path'] . DIRECTORY_SEPARATOR . 'Modules' . DIRECTORY_SEPARATOR . implode('/', $prefix) . '/' . $modelName . 'Controller.php';
+        $content = GenHelper::GenTestContent($nameSpace, $controllerFilePath);
 
-            $stubContent = StubHelper::GetStub('test.stub');
-            $stubContent = StubHelper::Replace([
-                '{{controllerIntro}}' => ReflectHelper::GetControllerAnnotation($nameSpace),
-                '{{ModelName}}' => $modelName,
-                '{{ModuleName}}' => implode('\\', $prefix),
-                '{{content}}' => $content,
-            ], $stubContent);
-            $moduleName = implode('/', $prefix);
-            $filePath = $this->laravel['path'] . "/../tests/Modules/$moduleName/{$modelName}ControllerTest.php";
-            $result = StubHelper::Save($filePath, $stubContent, $options['force']);
-            $this->line($result);
-        }
+        $stubContent = StubHelper::GetStub('test.stub');
+        $stubContent = StubHelper::Replace([
+            '{{controllerIntro}}' => ReflectHelper::GetControllerAnnotation($nameSpace),
+            '{{ModelName}}' => $modelName,
+            '{{ModuleName}}' => implode('\\', $prefix),
+            '{{content}}' => $content,
+        ], $stubContent);
+        $moduleName = implode('/', $prefix);
+        $filePath = $this->laravel['path'] . "/../tests/Modules/$moduleName/{$modelName}ControllerTest.php";
+        $result = StubHelper::Save($filePath, $stubContent, $options['force']);
+        $this->line($result);
     }
 }
