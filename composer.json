@@ -17,5 +17,12 @@
         "psr-4": {
             "Nichozuo\\LaravelCommon\\": "src"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Nichozuo\\LaravelCommon\\ServiceProvider"
+            ]
+        }
     }
 }
