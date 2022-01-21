@@ -53,6 +53,7 @@ class TableHelper
     public static function GetTables(): array
     {
         return Cache::store('file')->rememberForever('list_tables', function () {
+            DbalHelper::register();
             return self::SM()->ListTables();
         });
     }
