@@ -298,8 +298,8 @@ content;
                     $column->getPrecision(),
                     $column->getScale(),
                     $column->getNotNull() ? '是' : ' ',
-                    $column->getDefault() ? $column->getDefault() : ' ',
-                    $column->getComment() ? $column->getComment() : ' ',
+                    $column->getDefault() ?: ' ',
+                    $column->getComment() ?: ' ',
                 ]) . '|' . PHP_EOL;
         }
         $stubContent = StubHelper::GetStub('db.md');
