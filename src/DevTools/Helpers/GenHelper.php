@@ -26,7 +26,7 @@ class GenHelper
      */
     public static function GenTableCommentString(?Table $table): string
     {
-        return "protected \$comment = '{$table->getComment()}';";
+        return "protected string \$comment = '{$table->getComment()}';";
     }
 
     /**
@@ -104,6 +104,7 @@ class GenHelper
  * @method static idp(array $params)
  * @method static findOrFail(int $id)
  * @method static selectRaw(string $string)
+ * @method static withTrashed()
  ';
     }
 
