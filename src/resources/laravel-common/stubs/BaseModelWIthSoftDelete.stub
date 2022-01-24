@@ -4,6 +4,7 @@ namespace App\Models\Base;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Nichozuo\LaravelCommon\Traits\ModelTrait;
 use Illuminate\Database\Eloquent\Relations;
 
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations;
  */
 class Base{{ModelName}} extends Model
 {
-    use HasFactory, ModelTrait;
+    use HasFactory, ModelTrait, SoftDeletes;
 
     {{TableString}}
     {{TableCommentString}}

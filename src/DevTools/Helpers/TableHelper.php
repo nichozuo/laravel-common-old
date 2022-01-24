@@ -9,7 +9,6 @@ use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Nichozuo\LaravelCommon\Exception\Err;
 use Psr\SimpleCache\InvalidArgumentException;
 
 /**
@@ -34,7 +33,7 @@ class TableHelper
      */
     public static function SetComment(string $tableName, string $comment)
     {
-        DB::statement("ALTER TABLE `{$tableName}` comment '{$comment}'");
+        DB::statement("ALTER TABLE `$tableName` comment '$comment'");
     }
 
     /**
@@ -53,6 +52,7 @@ class TableHelper
     public static function GetTables(): array
     {
         return Cache::store('file')->rememberForever('list_tables', function () {
+            DbalHelper::register();
             return self::SM()->ListTables();
         });
     }

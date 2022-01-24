@@ -16,23 +16,23 @@ class Err extends BaseException
     /**
      * @param array $arr
      * @param string $description
-     * @return Err
+     * @throws Err
      */
-    public static function New(array $arr, string $description = ''): Err
+    public static function New(array $arr, string $description = '')
     {
         if ($description == '' && count($arr) == 3)
             $description = $arr[2];
 
-        return new static((int)$arr[0], $arr[1], $description, 'Toast');
+        throw new static((int)$arr[0], $arr[1], $description, 'Toast');
     }
 
     /**
      * @param $description
-     * @return Err
+     * @throws Err
      */
-    public static function NewText($description): Err
+    public static function NewText($description)
     {
-        return new static(999, '发生错误', $description, 'Toast');
+        throw new static(999, '发生错误', $description, 'Toast');
     }
 
     /**
@@ -48,30 +48,30 @@ class Err extends BaseException
     /**
      * @param string $message
      * @param string $description
-     * @return Err
+     * @throws Err
      */
-    public static function Notice(string $message, string $description = ''): Err
+    public static function Notice(string $message, string $description = '')
     {
-        return new static(999, $message, $description, 'notice');
+        throw new static(999, $message, $description, 'notice');
     }
 
     /**
      * @param string $message
      * @param string $description
-     * @return Err
+     * @throws Err
      */
-    public static function Modal(string $message, string $description = ''): Err
+    public static function Modal(string $message, string $description = '')
     {
-        return new static(999, $message, $description, 'modal');
+        throw new static(999, $message, $description, 'modal');
     }
 
     /**
      * @param string $message
      * @param string $description
-     * @return Err
+     * @throws Err
      */
-    public static function Page(string $message, string $description = ''): Err
+    public static function Page(string $message, string $description = '')
     {
-        return new static(999, $message, $description, 'page');
+        throw new static(999, $message, $description, 'page');
     }
 }
