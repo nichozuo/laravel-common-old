@@ -1,15 +1,15 @@
 <?php
 
-namespace Nichozuo\LaravelCommon\Exceptions;
+namespace Nichozuo\LaravelCommon\Exception;
 
 
 use Exception;
+
 
 class BaseException extends Exception
 {
     private string $description;
     private string $type;
-    private string $redirectUrl;
 
     /**
      * BaseException constructor.
@@ -17,15 +17,13 @@ class BaseException extends Exception
      * @param string $message
      * @param string $description
      * @param string $type
-     * @param string $redirectUrl
      */
-    public function __construct(int $code, string $message, string $description, string $type, string $redirectUrl = '')
+    public function __construct(int $code, string $message, string $description, string $type)
     {
         $this->code = $code;
         $this->message = $message;
         $this->description = $description;
         $this->type = $type;
-        $this->redirectUrl = $redirectUrl;
         parent::__construct();
     }
 
@@ -59,22 +57,6 @@ class BaseException extends Exception
     public function setType(string $type): void
     {
         $this->type = $type;
-    }
-
-    /**
-     * @return string
-     */
-    public function getRedirectUrl(): string
-    {
-        return $this->redirectUrl;
-    }
-
-    /**
-     * @param string $redirectUrl
-     */
-    public function setRedirectUrl(string $redirectUrl): void
-    {
-        $this->redirectUrl = $redirectUrl;
     }
 }
 
