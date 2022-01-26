@@ -2,6 +2,9 @@
 
 <p align="center"> .</p>
 
+## Requirement
+- "php": "^7.4|^8.0",
+- "laravel/framework": "^8.0",
 
 ## Installing
 
@@ -11,17 +14,10 @@ $ composer require nichozuo/laravel-common -vvv
 
 ## Usage
 
-TODO
-
-## Contributing
-
-You can contribute in one of three ways:
-
-1. File bug reports using the [issue tracker](https://github.com/nichozuo/laravel-common/issues).
-2. Answer questions or fix bugs on the [issue tracker](https://github.com/nichozuo/laravel-common/issues).
-3. Contribute new features or update the wiki.
-
-_The code contribution process is not very formal. You just need to make sure that you follow the PSR-0, PSR-1, and PSR-2 coding guidelines. Any new code contributions must be accompanied by unit tests where applicable._
+- [Install into a Laravel project](./src/resources/laravel-common/readme/1_install.md)
+- [Command list](./src/resources/laravel-common/readme/2_command.md)
+- [auto generate a api document](./src/resources/laravel-common/readme/3_docs.md)
+- [useful functions in model traits](./src/resources/laravel-common/readme/4_model_trait.md)
 
 ## License
 
