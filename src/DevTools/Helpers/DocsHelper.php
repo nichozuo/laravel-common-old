@@ -110,7 +110,7 @@ class DocsHelper
         foreach (Route::getRoutes() as $route) {
             if (!Str::startsWith($route->uri, 'api/'))
                 continue;
-            if (!Str::startsWith($route->getAction()['controller'], '\\App\\'))
+            if (!Str::startsWith($route->getAction()['controller'] ?? '', '\\App\\'))
                 continue;
             if ($route->getAction()['controller'] != $fullName)
                 continue;
