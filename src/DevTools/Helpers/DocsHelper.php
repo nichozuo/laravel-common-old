@@ -108,13 +108,12 @@ class DocsHelper
         $filePath = app_path('Modules') . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, explode('@', $key)[0]) . '.php';
         $content = '# 暂时没有内容';
         foreach (Route::getRoutes() as $route) {
-            if (!Str::startsWith($route->uri, 'api/') && !Str::startsWith($route->uri, 'tenant/'))
+            if (!Str::startsWith($route->uri, 'api/'))
                 continue;
             if (!Str::startsWith($route->getAction()['controller'] ?? '', '\\App\\'))
                 continue;
             if ($route->getAction()['controller'] != $fullName)
                 continue;
-
             $content = GenHelper::GenApiMD($route, $filePath, $className, $methodName);
             break;
         }
