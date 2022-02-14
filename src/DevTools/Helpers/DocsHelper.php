@@ -68,7 +68,7 @@ class DocsHelper
     public static function GetDatabaseMenu(): array
     {
         $tables = TableHelper::GetTables();
-        $return = null;
+        $return = [];
         foreach ($tables as $table) {
             $return[] = [
                 'key' => $table->getName(),
