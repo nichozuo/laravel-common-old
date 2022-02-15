@@ -130,16 +130,17 @@ class GenFilesCommand extends BaseCommand
      * @param array $options
      * @throws Exception
      */
-    private function makeController(Table $table, array $columns, string $modelName, array $prefix, array $options)
+    private function makeController(?Table $table, ?array $columns, string $modelName, array $prefix, array $options)
     {
+
         if (count($prefix) == 0)
             throw new Exception('生成Controller需要模块名称，比如： admin/wechat');
-        $hasSoftDelete = TableHelper::GetColumnsHasSoftDelete($table->getColumns());
+        $hasSoftDelete = TableHelper::GetColumnsHasSoftDelete($table ? $table->getColumns() : []);
         $stubName = $hasSoftDelete ? 'controllerWithSoftDelete.stub' : 'controller.stub';
         $stubContent = StubHelper::GetStub($stubName);
         $stubContent = StubHelper::Replace([
             '{{ModelName}}' => $modelName,
-            '{{TableComment}}' => $table->getComment(),
+            '{{TableComment}}' => $table ? $table->getComment() : '',
             '{{ModuleName}}' => implode('\\', $prefix),
             '{{InsertString}}' => GenHelper::GenColumnsRequestValidateString($columns, "\t\t\t"),
         ], $stubContent);
