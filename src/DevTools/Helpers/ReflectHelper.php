@@ -37,6 +37,7 @@ class ReflectHelper
         $arr1 = [];
         foreach ($arr as $item) {
             $t1 = explode('\'', $item);
+            if (count($t1) < 3) continue;
             $t2 = explode('|', $t1[3]);
             $t3 = explode('#', $t1[4]);
             $t4 = [
