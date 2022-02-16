@@ -61,7 +61,7 @@ class ReflectHelper
     {
         $reader = new Reader($className, $methodName);
         $data = $reader->getParameters();
-        return Arr::only($data, ['intro', 'responseParams']);
+        return Arr::only($data, ['intro', 'responseParams','response']);
     }
 
     /**
