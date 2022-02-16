@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 trait TestCaseTrait
 {
     protected string $token;
+    protected string $url = '';
     protected int $id;
 
     public function setUp(): void
