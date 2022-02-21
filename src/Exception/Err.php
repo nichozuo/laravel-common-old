@@ -16,62 +16,25 @@ class Err extends BaseException
     /**
      * @param array $arr
      * @param string $description
+     * @param int $type
      * @throws Err
      */
-    public static function New(array $arr, string $description = '')
+    public static function New(array $arr, string $description = '', int $type = 2)
     {
         if ($description == '' && count($arr) == 3)
             $description = $arr[2];
 
-        throw new static((int)$arr[0], $arr[1], $description, 'Toast');
-    }
-
-    /**
-     * @param $description
-     * @throws Err
-     */
-    public static function NewText($description)
-    {
-        throw new static(999, '发生错误', $description, 'Toast');
+        throw new static((int)$arr[0], $arr[1], $description, $type);
     }
 
     /**
      * @param string $message
      * @param string $description
+     * @param int $type
      * @throws Err
      */
-    public static function Toast(string $message, string $description = '')
+    public static function NewText(string $message, string $description = '', int $type = 2)
     {
-        throw new static(999, $message, $description, 'toast');
-    }
-
-    /**
-     * @param string $message
-     * @param string $description
-     * @throws Err
-     */
-    public static function Notice(string $message, string $description = '')
-    {
-        throw new static(999, $message, $description, 'notice');
-    }
-
-    /**
-     * @param string $message
-     * @param string $description
-     * @throws Err
-     */
-    public static function Modal(string $message, string $description = '')
-    {
-        throw new static(999, $message, $description, 'modal');
-    }
-
-    /**
-     * @param string $message
-     * @param string $description
-     * @throws Err
-     */
-    public static function Page(string $message, string $description = '')
-    {
-        throw new static(999, $message, $description, 'page');
+        throw new static(999, $message, $description, $type);
     }
 }

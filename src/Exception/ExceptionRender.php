@@ -12,26 +12,21 @@ use Throwable;
 
 class ExceptionRender
 {
-    public static function Render(Throwable $e)
+    public static function Render(Throwable $e): JsonResponse
     {
         $request = request();
         $class = get_class($e);
         $isDebug = config('app.debug');
-        $type = 'toast';
+        $type = 2;
 
-        $debugInfo = [
-            'exception' => [
-                'class' => $class,
-                'trace' => self::getTrace($e)
-            ],
+        $requestInfo = [
             'client' => $request->getClientIps(),
-            'request' => [
-                'method' => $request->getMethod(),
-                'uri' => $request->getUri(),
-                'params' => $request->all(),
-//                'header' => $request->header()
-            ],
+            'method' => $request->getMethod(),
+            'uri' => $request->getUri(),
+            'params' => $request->all(),
         ];
+
+        $exceptionInfo = null;
 
         switch ($class) {
             case Err::class:
@@ -66,6 +61,10 @@ class ExceptionRender
                 $code = 9;
                 $message = '系统错误';
                 $description = $e->getMessage();
+                $exceptionInfo = [
+                    'class' => $class,
+                    'trace' => self::getTrace($e)
+                ];
                 break;
         }
 
@@ -75,10 +74,17 @@ class ExceptionRender
             'message' => $message,
             'description' => $description,
         ];
-        if ($isDebug)
-            $jsonResponse['debug'] = $debugInfo;
 
-        Log::error($message, $debugInfo);
+        $debug = [
+            'request' => $requestInfo,
+            'exception' => $exceptionInfo
+        ];
+
+        if ($isDebug) {
+            $jsonResponse['debug'] = $debug;
+        }
+
+        Log::error($message, $debug);
 
         return response()->json($jsonResponse);
     }

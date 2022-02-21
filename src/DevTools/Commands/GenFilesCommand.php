@@ -123,8 +123,8 @@ class GenFilesCommand extends BaseCommand
     }
 
     /**
-     * @param Table $table
-     * @param array $columns
+     * @param Table|null $table
+     * @param array|null $columns
      * @param string $modelName
      * @param array $prefix
      * @param array $options
