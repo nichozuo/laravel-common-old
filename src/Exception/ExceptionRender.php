@@ -60,8 +60,9 @@ class ExceptionRender
             default:
                 $code = 9;
                 $message = '系统错误';
-                $description = $e->getMessage();
+                $description = '请联系管理员查看日志';
                 $exceptionInfo = [
+                    'message' => $e->getMessage(),
                     'class' => $class,
                     'trace' => self::getTrace($e)
                 ];
@@ -100,9 +101,10 @@ class ExceptionRender
         $line = array_column($arr, 'line');
         $trace = [];
         for ($i = 0; $i < count($file); $i++) {
-            $trace[] = [
-                $i => "$file[$i]($line[$i])"
-            ];
+            if (!strpos($file[$i], '/vendor/'))
+                $trace[] = [
+                    $i => "$file[$i]($line[$i])"
+                ];
         }
         return $trace;
     }
