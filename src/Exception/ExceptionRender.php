@@ -62,32 +62,30 @@ class ExceptionRender
                 $message = '系统错误';
                 $description = '请联系管理员查看日志';
                 $exceptionInfo = [
-                    'message' => $e->getMessage(),
                     'class' => $class,
                     'trace' => self::getTrace($e)
                 ];
                 break;
         }
 
-        $jsonResponse = [
+        Log::error($message, [
+            'message' => $description,
+            'debug' => [
+                'request' => $requestInfo,
+                'exception' => $exceptionInfo
+            ]
+        ]);
+
+        return response()->json([
             'code' => $code,
             'type' => $type,
             'message' => $message,
             'description' => $description,
-        ];
-
-        $debug = [
-            'request' => $requestInfo,
-            'exception' => $exceptionInfo
-        ];
-
-        if ($isDebug) {
-            $jsonResponse['debug'] = $debug;
-        }
-
-        Log::error($message, $debug);
-
-        return response()->json($jsonResponse);
+            'debug' => $isDebug ? [
+                'request' => $requestInfo,
+                'exception' => $exceptionInfo
+            ] : null
+        ]);
     }
 
     /**
