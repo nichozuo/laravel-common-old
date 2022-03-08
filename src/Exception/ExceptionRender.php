@@ -71,6 +71,7 @@ class ExceptionRender
         Log::error($message, [
             'message' => $description,
             'debug' => [
+                'message' => $e->getMessage(),
                 'request' => $requestInfo,
                 'exception' => $exceptionInfo
             ]
@@ -82,6 +83,7 @@ class ExceptionRender
             'message' => $message,
             'description' => $description,
             'debug' => $isDebug ? [
+                'message' => $e->getMessage(),
                 'request' => $requestInfo,
                 'exception' => $exceptionInfo
             ] : null
