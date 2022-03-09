@@ -224,4 +224,34 @@ trait ModelTrait
     {
         return $dateTime->format('Y-m-d H:i:s');
     }
+
+    /**
+     * @intro 与Select相反，排除指定的字段，其他字段select出来
+     * @param Builder $query
+     * @param array $pop 需要排除的字段数组
+     * @param array $push 需要增加的字段数组
+     * @return Builder
+     */
+    public function scopeUnSelect(Builder $query, array $pop = [], array $push = []): Builder
+    {
+        $fields = array_merge(['id'], $this->fillable, $push);
+        $fields = array_diff($fields, $pop);
+        return $query->select($fields);
+    }
+
+    /**
+     * @intro 与SelectRaw相反，排除指定的字段，其他字段select出来
+     * @param Builder $query
+     * @param string $popStr 需要排除的字段字符串，不要空格，逗号隔开
+     * @param string $pushStr 需要增加的字段字符串，不要空格，逗号隔开
+     * @return Builder
+     */
+    public function scopeUnSelectRaw(Builder $query, string $popStr = '', string $pushStr = ''): Builder
+    {
+        $pop = explode(',', $popStr);
+        $push = explode(',', $pushStr);
+        $fields = array_merge(['id'], $this->fillable, $push);
+        $fields = array_diff($fields, $pop);
+        return $query->select($fields);
+    }
 }

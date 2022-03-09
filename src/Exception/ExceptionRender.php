@@ -6,6 +6,7 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use PDOException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
@@ -55,6 +56,11 @@ class ExceptionRender
             case MethodNotAllowedHttpException::class:
                 $code = 999;
                 $message = "请求方式不正确";
+                $description = $e->getMessage();
+                break;
+            case PDOException::class:
+                $code = 999;
+                $message = "数据库链接错误";
                 $description = $e->getMessage();
                 break;
             default:
