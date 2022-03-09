@@ -16,12 +16,12 @@ trait ControllerTrait
     protected function perPage(): int
     {
         $params = request()->only('perPage');
-        if (!isset($params['perPage']) || is_numeric($params['perPage']))
+        if (!isset($params['perPage']) || !is_numeric($params['perPage']))
             return 20;
 
         $allow = config('nichozuo.perPageAllow', [10, 20, 50, 100]);
         if (!in_array($params['perPage'], $allow))
-            throw Err::NewText('分页数据不在规定范围内');
+            Err::NewText('分页数据不在规定范围内');
 
         return (int)$params['perPage'];
     }

@@ -66,7 +66,7 @@ class ExceptionRender
             default:
                 $code = 9;
                 $message = '系统错误';
-                $description = $e->getMessage();
+                $description = '请联系管理员查看日志';
                 $exceptionInfo = [
                     'class' => $class,
                     'trace' => self::getTrace($e)
@@ -74,25 +74,26 @@ class ExceptionRender
                 break;
         }
 
-        $jsonResponse = [
+        Log::error($message, [
+            'message' => $description,
+            'debug' => [
+                'message' => $e->getMessage(),
+                'request' => $requestInfo,
+                'exception' => $exceptionInfo
+            ]
+        ]);
+
+        return response()->json([
             'code' => $code,
             'type' => $type,
             'message' => $message,
             'description' => $description,
-        ];
-
-        $debug = [
-            'request' => $requestInfo,
-            'exception' => $exceptionInfo
-        ];
-
-        if ($isDebug) {
-            $jsonResponse['debug'] = $debug;
-        }
-
-        Log::error($message, $debug);
-
-        return response()->json($jsonResponse);
+            'debug' => $isDebug ? [
+                'message' => $e->getMessage(),
+                'request' => $requestInfo,
+                'exception' => $exceptionInfo
+            ] : null
+        ]);
     }
 
     /**
@@ -106,9 +107,10 @@ class ExceptionRender
         $line = array_column($arr, 'line');
         $trace = [];
         for ($i = 0; $i < count($file); $i++) {
-            $trace[] = [
-                $i => "$file[$i]($line[$i])"
-            ];
+            if (!strpos($file[$i], '/vendor/'))
+                $trace[] = [
+                    $i => "$file[$i]($line[$i])"
+                ];
         }
         return $trace;
     }
