@@ -22,9 +22,11 @@ class ExceptionRender
         $requestInfo = [
             'client' => $request->getClientIps(),
             'method' => $request->getMethod(),
-            'uri' => $request->getUri(),
+            'uri' => $request->getPathInfo(),
             'params' => $request->all(),
         ];
+
+        $skipLog = self::GetSkipLog($requestInfo['uri']);
 
         $exceptionInfo = null;
 
@@ -68,14 +70,15 @@ class ExceptionRender
                 break;
         }
 
-        Log::error($message, [
-            'message' => $description,
-            'debug' => [
-                'message' => $e->getMessage(),
-                'request' => $requestInfo,
-                'exception' => $exceptionInfo
-            ]
-        ]);
+        if(!$skipLog)
+            Log::error($message, [
+                'message' => $description,
+                'debug' => [
+                    'message' => $e->getMessage(),
+                    'request' => $requestInfo,
+                    'exception' => $exceptionInfo
+                ]
+            ]);
 
         return response()->json([
             'code' => $code,
@@ -119,5 +122,18 @@ class ExceptionRender
         foreach ($errors as $key => $value)
             $err[] = $key;
         return implode(',', $err);
+    }
+
+    /**
+     * @param string $pathInfo
+     * @return bool
+     */
+    private static function GetSkipLog(string $pathInfo): bool
+    {
+        $skipLogPathInfo = config('common.skipLogPathInfo');
+        if (!$skipLogPathInfo)
+            return false;
+
+        return in_array($pathInfo, $skipLogPathInfo);
     }
 }
