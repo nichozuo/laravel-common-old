@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 trait TestCaseTrait
 {
     protected string $token;
+    protected string $url = '';
     protected int $id;
 
     public function setUp(): void
@@ -27,6 +28,7 @@ trait TestCaseTrait
     {
         $url = $this->getUrl($method);
         $headers['Authorization'] = 'Bearer ' . $this->token;
+        $url = $this->url ? $this->url . $url : $url;
         $response = $this->post($url, $params, $headers);
         $json = $response->json();
         $this->assertTrue($response->getStatusCode() == 200);

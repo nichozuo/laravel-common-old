@@ -6,32 +6,30 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use PDOException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class ExceptionRender
 {
-    public static function Render(Throwable $e)
+    public static function Render(Throwable $e): JsonResponse
     {
         $request = request();
         $class = get_class($e);
         $isDebug = config('app.debug');
-        $type = 'toast';
+        $type = 2;
 
-        $debugInfo = [
-            'exception' => [
-                'class' => $class,
-                'trace' => self::getTrace($e)
-            ],
+        $requestInfo = [
             'client' => $request->getClientIps(),
-            'request' => [
-                'method' => $request->getMethod(),
-                'uri' => $request->getUri(),
-                'params' => $request->all(),
-//                'header' => $request->header()
-            ],
+            'method' => $request->getMethod(),
+            'uri' => $request->getPathInfo(),
+            'params' => $request->all(),
         ];
+
+        $skipLog = self::GetSkipLog($requestInfo['uri']);
+
+        $exceptionInfo = null;
 
         switch ($class) {
             case Err::class:
@@ -62,25 +60,43 @@ class ExceptionRender
                 $message = "请求方式不正确";
                 $description = $e->getMessage();
                 break;
+            case PDOException::class:
+                $code = 999;
+                $message = "数据库链接错误";
+                $description = $e->getMessage();
+                break;
             default:
                 $code = 9;
                 $message = '系统错误';
-                $description = $e->getMessage();
+                $description = '请联系管理员查看日志';
+                $exceptionInfo = [
+                    'class' => $class,
+                    'trace' => self::getTrace($e)
+                ];
                 break;
         }
 
-        $jsonResponse = [
+        if(!$skipLog)
+            Log::error($message, [
+                'message' => $description,
+                'debug' => [
+                    'message' => $e->getMessage(),
+                    'request' => $requestInfo,
+                    'exception' => $exceptionInfo
+                ]
+            ]);
+
+        return response()->json([
             'code' => $code,
             'type' => $type,
             'message' => $message,
             'description' => $description,
-        ];
-        if ($isDebug)
-            $jsonResponse['debug'] = $debugInfo;
-
-        Log::error($message, $debugInfo);
-
-        return response()->json($jsonResponse);
+            'debug' => $isDebug ? [
+                'message' => $e->getMessage(),
+                'request' => $requestInfo,
+                'exception' => $exceptionInfo
+            ] : null
+        ]);
     }
 
     /**
@@ -94,9 +110,10 @@ class ExceptionRender
         $line = array_column($arr, 'line');
         $trace = [];
         for ($i = 0; $i < count($file); $i++) {
-            $trace[] = [
-                $i => "$file[$i]($line[$i])"
-            ];
+            if (!strpos($file[$i], '/vendor/'))
+                $trace[] = [
+                    $i => "$file[$i]($line[$i])"
+                ];
         }
         return $trace;
     }
@@ -111,5 +128,18 @@ class ExceptionRender
         foreach ($errors as $key => $value)
             $err[] = $key;
         return implode(',', $err);
+    }
+
+    /**
+     * @param string $pathInfo
+     * @return bool
+     */
+    private static function GetSkipLog(string $pathInfo): bool
+    {
+        $skipLogPathInfo = config('common.skipLogPathInfo');
+        if (!$skipLogPathInfo)
+            return false;
+
+        return in_array($pathInfo, $skipLogPathInfo);
     }
 }

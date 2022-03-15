@@ -35,5 +35,8 @@ return [
         'foldersSubTitleConfig' => [
             'Admin' => '管理员模块',
         ]
+    ],
+    'skipLogPathInfo' => [
+        '/api/admin/auth/me'
     ]
 ];

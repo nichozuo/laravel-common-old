@@ -45,9 +45,11 @@ class GenHelper
      * @param string $tab
      * @return string
      */
-    public static function GenColumnsRequestValidateString(array $columns, string $tab = ''): string
+    public static function GenColumnsRequestValidateString(?array $columns, string $tab = ''): string
     {
         $t1 = '';
+        if (empty($columns)) return $t1;
+
         foreach ($columns as $item) {
             $name = $item->getName();
             $required = TableHelper::GetColumnRequired($item);
@@ -208,6 +210,7 @@ content;
      */
     public static function GenApiMD($route, string $filePath, $className, $methodName): string
     {
+
         $data = ReflectHelper::GetMethodAnnotation($className, $methodName);
         $data['title'] = $data['title'] ?? $methodName;
         $data['intro'] = isset($data['intro']) ? ' > ' . $data['intro'] : '';
