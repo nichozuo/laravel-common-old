@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Support\Arr;
 use ReflectionException;
 use ReflectionMethod;
+use ReflectionClass;
 
 class ReflectHelper
 {
@@ -19,23 +20,28 @@ class ReflectHelper
      */
     public static function GetMethodParamsArray(string $filePath, string $className, string $methodName): array
     {
-        $ref = new ReflectionMethod($className, $methodName);
-        $startLine = $ref->getStartLine();
-        $endLine = $ref->getEndLine();
-        $length = $endLine - $startLine;
-        $source = file($filePath);
-        $code = array_slice($source, $startLine, $length);
-        $start = $end = false;
-        $arr = [];
-        foreach ($code as $line) {
-            $t = trim($line);
-            if ($t == ']);') $end = true;
-            if ($start && !$end)
-                $arr[] = $t;
-            if ($t == '$params = $request->validate([') $start = true;
+        $rules = self::GetMethodVaildateRules($filePath, $className, $methodName);
+        $data = self::CheckValidateParams($rules, ']);', '$params = $request->validate([');
+        if (empty($data)) {
+            $data = self::CheckValidateParams($rules, ');', '$params = $request->validate(');
+            list($class, $method) = explode('::', $data[0]);
+            $className = "\App\Validates\\$class";
+            $methodName = str_replace('()', '', $method);
+            $filePath = app_path('Validates') . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $class) . '.php';
+            $rules = self::GetMethodVaildateRules($filePath, $className, $methodName);
+            $data = self::CheckValidateParams($rules, '];', 'return [');
         }
-        $arr1 = [];
-        foreach ($arr as $item) {
+        return self::GetMethodParamsData($data);
+    }
+
+    /**
+     * @param $data
+     * @return array
+     */
+    public static function GetMethodParamsData($data)
+    {
+        $arr = [];
+        foreach ($data as $item) {
             $t1 = explode('\'', $item);
             if (count($t1) < 3) continue;
             $t2 = explode('|', $t1[3]);
@@ -46,9 +52,26 @@ class ReflectHelper
                 $t2[1],
                 (count($t3) > 1) ? trim($t3[1]) : '-'
             ];
-            $arr1[] = $t4;
+            $arr[] = $t4;
         }
-        return $arr1;
+        return $arr;
+    }
+
+    /**
+     * @param string $filePath
+     * @param string $className
+     * @param string $methodName
+     * @return array
+     * @throws ReflectionException
+     */
+    public static function GetMethodVaildateRules(string $filePath, string $className, string $methodName): array
+    {
+        $result = new ReflectionMethod($className, $methodName);
+        $startLine = $result->getStartLine();
+        $endLine = $result->getEndLine();
+        $length = $endLine - $startLine;
+        $source = file($filePath);
+        return array_slice($source, $startLine, $length);
     }
 
     /**
@@ -61,7 +84,7 @@ class ReflectHelper
     {
         $reader = new Reader($className, $methodName);
         $data = $reader->getParameters();
-        return Arr::only($data, ['intro', 'responseParams','response']);
+        return Arr::only($data, ['intro', 'responseParams', 'response']);
     }
 
     /**
@@ -74,5 +97,25 @@ class ReflectHelper
         $reader = new Reader($className);
         $data = $reader->getParameters();
         return $data['intro'] ?? '';
+    }
+
+    /**
+     * @param array $data
+     * @param string $strStart
+     * @param string $strEnd
+     * @return array
+     */
+    public static function CheckValidateParams(array $data, string $strStart, string $strEnd)
+    {
+        $start = $end = false;
+        $arr = [];
+        foreach ($data as $line) {
+            $t = trim($line);
+            if ($t == $strStart) $end = true;
+            if ($start && !$end)
+                $arr[] = $t;
+            if ($t == $strEnd) $start = true;
+        }
+        return $arr;
     }
 }

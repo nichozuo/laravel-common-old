@@ -1,0 +1,37 @@
+<?php
+
+
+namespace App\Validates;
+
+
+/**
+ * @intro {{TableComment}}
+ * Class {{ModelName}}Validate
+ * @package App\Validates\{{ModuleName}}Validate
+ */
+class {{ModelName}}Validate
+{
+
+    /**
+     * @intro 添加
+     * @return array
+     */
+    public static function store(): array
+    {
+        return [
+{{InsertString}}
+        ];
+    }
+
+    /**
+     * @intro 修改
+     * @return array
+     */
+    public static function update(): array
+    {
+        $params = self::store();
+        $params['id'] = 'required|integer';
+        return $params;
+    }
+
+}
