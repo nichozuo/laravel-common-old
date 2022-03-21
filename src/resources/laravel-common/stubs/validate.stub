@@ -29,9 +29,10 @@ class {{ModelName}}Validate
      */
     public static function update(): array
     {
-        $params = self::store();
-        $params['id'] = 'required|integer';
-        return $params;
+        return [
+            'id' => 'required|integer', # ID
+{{InsertString}}
+        ];
     }
 
 }
