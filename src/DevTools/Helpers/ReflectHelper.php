@@ -24,12 +24,14 @@ class ReflectHelper
         $data = self::CheckValidateParams($rules, ']);', '$params = $request->validate([');
         if (empty($data)) {
             $data = self::CheckValidateParams($rules, ');', '$params = $request->validate(');
-            list($class, $method) = explode('::', $data[0]);
-            $className = "\App\Validates\\$class";
-            $methodName = str_replace('()', '', $method);
-            $filePath = app_path('Validates') . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $class) . '.php';
-            $rules = self::GetMethodVaildateRules($filePath, $className, $methodName);
-            $data = self::CheckValidateParams($rules, '];', 'return [');
+            if (!empty($data)) {
+                list($class, $method) = explode('::', $data[0]);
+                $className = "\App\Validates\\$class";
+                $methodName = str_replace('()', '', $method);
+                $filePath = app_path('Validates') . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $class) . '.php';
+                $rules = self::GetMethodVaildateRules($filePath, $className, $methodName);
+                $data = self::CheckValidateParams($rules, '];', 'return [');
+            }
         }
         return self::GetMethodParamsData($data);
     }
