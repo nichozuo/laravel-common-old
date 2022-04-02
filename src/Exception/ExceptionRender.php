@@ -87,7 +87,7 @@ class ExceptionRender
 
         return response()->json([
             'code' => $code,
-            'type' => $type,
+            'type' => (int)$type,
             'message' => $message,
             'description' => $description,
             'debug' => $isDebug ? [
