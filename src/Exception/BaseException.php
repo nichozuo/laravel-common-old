@@ -44,9 +44,9 @@ class BaseException extends Exception
     }
 
     /**
-     * @return string
+     * @return integer
      */
-    public function getType(): string
+    public function getType(): integer
     {
         return $this->type;
     }
