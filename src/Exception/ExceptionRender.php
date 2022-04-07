@@ -29,7 +29,10 @@ class ExceptionRender
 
         $skipLog = self::GetSkipLog($requestInfo['uri']);
 
-        $exceptionInfo = null;
+        $exceptionInfo = [
+            'class' => $class,
+            'trace' => self::getTrace($e)
+        ];
 
         switch ($class) {
             case Err::class:
@@ -69,10 +72,6 @@ class ExceptionRender
                 $code = 9;
                 $message = '系统错误';
                 $description = '请联系管理员查看日志';
-                $exceptionInfo = [
-                    'class' => $class,
-                    'trace' => self::getTrace($e)
-                ];
                 break;
         }
 
@@ -88,7 +87,7 @@ class ExceptionRender
 
         return response()->json([
             'code' => $code,
-            'type' => $type,
+            'type' => (int)$type,
             'message' => $message,
             'description' => $description,
             'debug' => $isDebug ? [

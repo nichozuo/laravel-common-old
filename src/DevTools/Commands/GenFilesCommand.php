@@ -35,6 +35,7 @@ class GenFilesCommand extends BaseCommand
             ['controller', 'c', InputOption::VALUE_NONE, '创建 controller 文件'],
             ['test', 't', InputOption::VALUE_NONE, '根据controller创建test文件'],
             ['force', 'f', InputOption::VALUE_NONE, '强制创建并覆盖'],
+            ['rules', 'r', InputOption::VALUE_NONE, '单独提取 validate rules'],
         ];
     }
 
@@ -46,7 +47,6 @@ class GenFilesCommand extends BaseCommand
     {
         DbalHelper::register();
         $options = $this->options();
-
         // 计算table和prefix
         $key = $this->argument('key');
         $key = str_replace('/', '\\', $key);
@@ -74,6 +74,8 @@ class GenFilesCommand extends BaseCommand
 
         if ($options['test'])
             $this->makeTest($modelName, $prefix, $options);
+
+
     }
 
     /**
@@ -135,17 +137,47 @@ class GenFilesCommand extends BaseCommand
 
         if (count($prefix) == 0)
             throw new Exception('生成Controller需要模块名称，比如： admin/wechat');
+
+        $rules = $options['rules'] ? 'Rules' : '';
         $hasSoftDelete = TableHelper::GetColumnsHasSoftDelete($table ? $table->getColumns() : []);
-        $stubName = $hasSoftDelete ? 'controllerWithSoftDelete.stub' : 'controller.stub';
+        $stubName = $hasSoftDelete ? "controllerWithSoftDelete{$rules}.stub" : "controller{$rules}.stub";
+
         $stubContent = StubHelper::GetStub($stubName);
+        $stubContent = StubHelper::Replace([
+            '{{ModelName}}' => $modelName,
+            '{{TableComment}}' => $table ? $table->getComment() : '',
+            '{{ModuleName}}' => implode('\\', $prefix),
+            '{{InsertString}}' => $rules ? "{$modelName}Validate" : GenHelper::GenColumnsRequestValidateString($columns, "\t\t\t"),
+        ], $stubContent);
+
+        $moduleName = implode('/', $prefix);
+        $filePath = $this->laravel['path'] . "/Modules/$moduleName/{$modelName}Controller.php";
+        $result = StubHelper::Save($filePath, $stubContent, $options['force']);
+        $this->line($result);
+
+        if ($options['rules'])
+            $this->makeValidate($modelName, $prefix, $table, $columns, $options);
+
+    }
+
+    /**
+     * @param string $modelName
+     * @param array $prefix
+     * @param $table
+     * @param $columns
+     * @param $options
+     * @return void
+     */
+    private function makeValidate(string $modelName, array $prefix, $table, $columns, $options)
+    {
+        $stubContent = StubHelper::GetStub('validate.stub');
         $stubContent = StubHelper::Replace([
             '{{ModelName}}' => $modelName,
             '{{TableComment}}' => $table ? $table->getComment() : '',
             '{{ModuleName}}' => implode('\\', $prefix),
             '{{InsertString}}' => GenHelper::GenColumnsRequestValidateString($columns, "\t\t\t"),
         ], $stubContent);
-        $moduleName = implode('/', $prefix);
-        $filePath = $this->laravel['path'] . "/Modules/$moduleName/{$modelName}Controller.php";
+        $filePath = $this->laravel['path'] . "/Validates/{$modelName}Validate.php";
         $result = StubHelper::Save($filePath, $stubContent, $options['force']);
         $this->line($result);
     }
@@ -178,4 +210,5 @@ class GenFilesCommand extends BaseCommand
         $result = StubHelper::Save($filePath, $stubContent, $options['force']);
         $this->line($result);
     }
+
 }
