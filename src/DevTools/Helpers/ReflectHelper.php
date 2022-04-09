@@ -49,7 +49,7 @@ class ReflectHelper
             $t2 = explode('|', $t1[3]);
             $t3 = explode('#', $t1[4]);
             $t4 = [
-                $t1[1],
+                str_replace('.*.', '.\*.', $t1[1]),
                 $t2[0] == 'nullable' ? '-' : 'Y',
                 $t2[1],
                 (count($t3) > 1) ? trim($t3[1]) : '-'
