@@ -43,7 +43,7 @@ trait ModelTrait
     public function scopeIfWhereIn(Builder $query, array $params, string $key, string $field = ''): Builder
     {
         if (isset($params[$key])) {
-            if (is_array($params[$key]) && count($params[$key]) == 0)
+            if (is_array($params[$key]))
                 throw Err::NewText('ifWhereIn的参数必须是数组');
             $field = ($field == '') ? $key : $field;
             return $query->whereIn($field, $params[$key]);
