@@ -144,13 +144,17 @@ trait ModelTrait
      * @param array $params
      * @param array $keys
      * @param string|null $label
+     * @param bool $softDelete
      * @return Builder
      * @throws Err
      */
-    public function scopeUnique(Builder $query, array $params, array $keys, string $label = null): Builder
+    public function scopeUnique(Builder $query, array $params, array $keys, string $label = null, bool $softDelete = false): Builder
     {
         $data = Arr::only($params, $keys);
-        $model = $query->where($data)->first();
+        if($softDelete)
+            $model = $query->withTrashed()->where($data)->first();
+        else
+            $model = $query->where($data)->first();
         if ($model && $label != null) {
             if (!isset($params['id']) || $model->id != $params['id'])
                 throw Err::NewText("{$label}【{$params[$keys[0]]}】已存在，请重试");
