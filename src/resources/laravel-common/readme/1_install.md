@@ -2,7 +2,7 @@
 
 ### Install
 ```bash
-composer require nichozuo/laravel-common:dev-develop -vvv
+composer require nichozuo/laravel-common -vvv
 ```
 
 ### vendor publish
@@ -15,9 +15,11 @@ php artisan vendor:publish --provider="Nichozuo\LaravelCommon\ServiceProvider"
 // 增加两个方法调用
 public function register()
 {
+    // 停止输出系统自带的错误提示
     $this->reportable(function (Throwable $e) {
         //
     })->stop();
+    // 替换成自己的统一错误处理方法
     $this->renderable(function (Throwable $e) {
         return ExceptionRender::Render($e);
     });
@@ -45,7 +47,7 @@ protected function redirectTo($request)
 ```php
 'api' => [
     // ...
-    // 增加这里
+    // 增加这里，统一处理返回数据
     JsonResponseMiddleware::class
 ],
 ```

@@ -127,7 +127,7 @@ class GenHelper
                 $t .= <<<t
     public function $name(): Relations\BelongsTo
     {
-        return \$this->belongsTo(Base$modelName::class, '$columnName', 'id');
+        return \$this->belongsTo(Models\\$modelName::class, '$columnName', 'id');
     }
 
 t;
@@ -145,7 +145,7 @@ t;
                     $t .= <<<t
     public function $name(): Relations\HasMany
     {
-        return \$this->hasMany(Base$modelName::class, '$foreignKey', 'id');
+        return \$this->hasMany(Models\\$modelName::class, '$foreignKey', 'id');
     }
 
 t;
