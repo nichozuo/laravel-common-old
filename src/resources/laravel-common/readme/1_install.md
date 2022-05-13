@@ -10,6 +10,11 @@ composer require nichozuo/laravel-common -vvv
 php artisan vendor:publish --provider="Nichozuo\LaravelCommon\ServiceProvider"
 ```
 
+### composer mirror
+```bash
+composer config repo.packagist composer https://mirrors.aliyun.com/composer/
+```
+
 ### App\Exceptions\Handler.php
 ```php
 // 增加两个方法调用
