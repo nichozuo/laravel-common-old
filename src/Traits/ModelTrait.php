@@ -149,8 +149,7 @@ trait ModelTrait
      * @return Builder
      * @throws Err
      */
-    public function scopeUnique(Builder $query, array $params, array $keys, string $label = null, bool $softDelete = false): Builder
-    public function scopeUnique(Builder $query, array $params, array $keys, string $label = null, string $field = 'id'): Builder
+    public function scopeUnique(Builder $query, array $params, array $keys, string $label = null, bool $softDelete = false,string $field = 'id'): Builder
     {
         $data = Arr::only($params, $keys);
         if($softDelete)
