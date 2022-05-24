@@ -26,10 +26,12 @@ return [
 //        '/api/app/version/check',
     ],
     'iSeedBackupList' => [
-        'permissions',
-        'role_has_permissions',
-        'model_has_roles',
+        'admins',
         'personal_access_tokens',
+        'sys_permissions',
+        'sys_role_has_permissions',
+        'sys_model_has_roles',
+        'sys_personal_access_tokens',
     ],
     'docs' => [
         'foldersSubTitleConfig' => [

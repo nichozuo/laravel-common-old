@@ -8,6 +8,7 @@ use Nichozuo\LaravelCommon\DevTools\Commands\ClearDBCacheCommand;
 use Nichozuo\LaravelCommon\DevTools\Commands\DumpTableCommand;
 use Nichozuo\LaravelCommon\DevTools\Commands\GenFilesCommand;
 use Nichozuo\LaravelCommon\DevTools\Commands\ISeedBackupCommand;
+use Nichozuo\LaravelCommon\DevTools\Commands\UpdateModelsCommand;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
@@ -17,7 +18,8 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             DumpTableCommand::class,
             ClearDBCacheCommand::class,
             GenFilesCommand::class,
-            ISeedBackupCommand::class
+            ISeedBackupCommand::class,
+            UpdateModelsCommand::class
         ]);
     }
 
