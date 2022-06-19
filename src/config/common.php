@@ -29,9 +29,9 @@ return [
         'admins',
         'personal_access_tokens',
         'sys_permissions',
+        'sys_roles',
         'sys_role_has_permissions',
         'sys_model_has_roles',
-        'sys_personal_access_tokens',
     ],
     'docs' => [
         'foldersSubTitleConfig' => [

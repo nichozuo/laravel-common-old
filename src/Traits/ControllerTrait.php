@@ -37,4 +37,14 @@ trait ControllerTrait
         $mine_zip = '7z,zip,rar';
         return $mime_image . ',' . $mine_docs . ',' . $mine_zip;
     }
+
+    /**
+     * @param array $params
+     * @param string $key
+     */
+    protected function crypto(array &$params, string $key = 'password')
+    {
+        if (isset($params[$key]))
+            $params[$key] = bcrypt($params[$key]);
+    }
 }

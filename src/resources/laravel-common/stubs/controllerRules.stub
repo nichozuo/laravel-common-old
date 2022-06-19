@@ -23,7 +23,7 @@ class {{ModelName}}Controller extends Controller
      * @return mixed
      * @throws Err
     */
-    public function list(Request $request)
+    public function list(Request $request): mixed
     {
         $params = $request->validate([
             'name' => 'nullable|string', // 模糊搜索：名称

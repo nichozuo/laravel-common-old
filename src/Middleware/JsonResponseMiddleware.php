@@ -26,7 +26,7 @@ class JsonResponseMiddleware
         ];
 
         // 处理不被code和message包裹的响应
-        $responseDoNotWrap = config('zuo.responseDoNotWrap', []);
+        $responseDoNotWrap = config('common.responseDoNotWrap', []);
         if (count($responseDoNotWrap)) {
             $pathInfo = $request->getPathInfo();
             if (in_array($pathInfo, $responseDoNotWrap)) {

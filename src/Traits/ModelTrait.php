@@ -91,8 +91,8 @@ trait ModelTrait
 
             // 数据类型
             if ($type == 'date') {
-                $a[0] = $a[0] == "" ? "" : Carbon::parse($a[0])->toDateString();
-                $a[1] = $a[1] == "" ? "" : Carbon::parse($a[1])->toDateString();
+                $a[0] = $a[0] == "" ? "" : Carbon::parse($a[0])->startOfDay()->toDateString();
+                $a[1] = $a[1] == "" ? "" : Carbon::parse($a[1])->endOfDay()->toDateString();
             } elseif ($type == 'datetime') {
                 $a[0] = $a[0] == "" ? "" : Carbon::parse($a[0])->toDateTimeString();
                 $a[1] = $a[1] == "" ? "" : Carbon::parse($a[1])->toDateTimeString();
@@ -149,10 +149,10 @@ trait ModelTrait
      * @return Builder
      * @throws Err
      */
-    public function scopeUnique(Builder $query, array $params, array $keys, string $label = null, bool $softDelete = false,string $field = 'id'): Builder
+    public function scopeUnique(Builder $query, array $params, array $keys, string $label = null, bool $softDelete = false, string $field = 'id'): Builder
     {
         $data = Arr::only($params, $keys);
-        if($softDelete)
+        if ($softDelete)
             $model = $query->withTrashed()->where($data)->first();
         else
             $model = $query->where($data)->first();
@@ -261,5 +261,24 @@ trait ModelTrait
         $fields = array_merge(['id'], $this->fillable, $push);
         $fields = array_diff($fields, $pop);
         return $query->select($fields);
+    }
+
+    /**
+     * @intro 用于导出的
+     * @param $query
+     * @param $params
+     * @param $page
+     * @param $pageSize
+     * @return mixed
+     */
+    public function scopeDownload($query, $params, $page, $pageSize)
+    {
+        $type = $params['download_type'];
+        if ($type == 1) {
+            // 下载当前页
+            return $query->forPage($page, $pageSize);
+        } else {
+            return $query;
+        }
     }
 }
