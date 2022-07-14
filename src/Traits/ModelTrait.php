@@ -98,7 +98,7 @@ trait ModelTrait
                 $a[1] = $a[1] == "" ? "" : Carbon::parse($a[1])->toDateTimeString();
             } elseif ($type == 'date_or_time') {
                 $a[0] = $a[0] == "" ? "" : Carbon::parse($a[0])->toDateTimeString();
-                $a[1] = $a[1] == "" ? "" : Carbon::parse(date('Y-m-d 23:59:00', strtotime($a[1])))->toDateTimeString();
+                $a[1] = $a[1] == "" ? "" : Carbon::parse(date('Y-m-d 23:59:59', strtotime($a[1])))->toDateTimeString();
             } else {
                 $a[0] = $a[0] == "" ? "" : floatval($a[0]);
                 $a[1] = $a[1] == "" ? "" : floatval($a[1]);
