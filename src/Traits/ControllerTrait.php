@@ -19,7 +19,7 @@ trait ControllerTrait
         if (!isset($params['perPage']) || !is_numeric($params['perPage']))
             return 20;
 
-        $allow = config('nichozuo.perPageAllow', [10, 20, 50, 100]);
+        $allow = config('nichozuo.perPageAllow', [10, 20, 50, 100,500,1000]);
         if (!in_array($params['perPage'], $allow))
             Err::NewText('分页数据不在规定范围内');
 
