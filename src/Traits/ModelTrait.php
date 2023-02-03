@@ -94,8 +94,8 @@ trait ModelTrait
                 $a[0] = $a[0] == "" ? "" : Carbon::parse($a[0])->startOfDay()->toDateString();
                 $a[1] = $a[1] == "" ? "" : Carbon::parse($a[1])->endOfDay()->toDateString();
             } elseif ($type == 'datetime') {
-                $a[0] = $a[0] == "" ? "" : Carbon::parse($a[0])->toDateTimeString();
-                $a[1] = $a[1] == "" ? "" : Carbon::parse($a[1])->toDateTimeString();
+                $a[0] = $a[0] == "" ? "" : Carbon::parse($a[0])->startOfDay()->toDateTimeString();
+                $a[1] = $a[1] == "" ? "" : Carbon::parse($a[1])->endOfDay()->toDateTimeString();
             } elseif ($type == 'date_or_time') {
                 $a[0] = $a[0] == "" ? "" : Carbon::parse($a[0])->toDateTimeString();
                 $a[1] = $a[1] == "" ? "" : Carbon::parse(date('Y-m-d 23:59:59', strtotime($a[1])))->toDateTimeString();
