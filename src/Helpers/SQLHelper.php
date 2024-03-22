@@ -17,6 +17,7 @@ class SQLHelper
     {
         if (config('app.debug')) {
             DB::listen(function ($query) {
+                $query->sql = str_replace('%', '%%', $query->sql);
                 $tmp = str_replace('?', '"' . '%s' . '"', $query->sql);
                 $qBindings = [];
                 if (!empty($query->bindings)) {
