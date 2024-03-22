@@ -15,7 +15,7 @@
         "ext-curl": "*",
         "ext-iconv": "*",
         "ext-openssl": "*",
-        "laravel/framework": "^9",
+        "laravel/framework": "^8|^9",
         "doctrine/dbal": "^3.3",
         "jan-swiecki/simple-annotations": "^0.3.1",
         "orangehill/iseed": "^3.0"
